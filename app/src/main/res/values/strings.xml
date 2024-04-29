@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">My Application</string>
+
+    <string name="search_word_screen_search_place">Type the word</string>
+</resources>
