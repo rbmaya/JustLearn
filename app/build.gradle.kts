@@ -5,6 +5,8 @@ plugins {
     id("dagger.hilt.android.plugin")
     kotlin("android")
     kotlin("kapt")
+    kotlin("plugin.serialization")
+    kotlin("plugin.parcelize")
 }
 
 repositories {
@@ -74,6 +76,8 @@ dependencies {
     implementation(Dependencies.Lifecycle.composeViewModel)
 
     implementation(Dependencies.Navigation.navigationCompose)
+
+    implementation(Dependencies.Serialization.serialization)
 
     implementation(Dependencies.Hilt.android)
     implementation(Dependencies.Hilt.navigation)

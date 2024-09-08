@@ -1,5 +1,11 @@
 <resources>
     <string name="app_name">My Application</string>
 
+    <string name="empty_result_defailt_title">"Oops! Nothing has found."</string>
+
     <string name="search_word_screen_search_place">Type the word</string>
+
+    <string name="word_details_screen_synonyms">Synonyms:\n</string>
+    <string name="word_details_screen_antonyms">Antonyms:\n</string>
+
 </resources>

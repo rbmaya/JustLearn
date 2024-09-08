@@ -48,6 +48,6 @@ class SearchWordViewModel @Inject constructor(
     }
 
     companion object {
-        private const val SEARCH_DEBOUNCE_MS = 3000L
+        private const val SEARCH_DEBOUNCE_MS = 1000L
     }
 }

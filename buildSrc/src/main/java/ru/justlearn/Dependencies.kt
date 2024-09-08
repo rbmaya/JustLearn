@@ -23,13 +23,17 @@ object Dependencies {
     }
 
     object Hilt {
-        private const val version = "2.46"
+        private const val version = "2.49"
         const val android = "com.google.dagger:hilt-android:$version"
         const val navigation = "androidx.hilt:hilt-navigation-compose:1.2.0"
         const val compiler = "com.google.dagger:hilt-compiler:$version"
     }
 
     object Navigation {
-        const val navigationCompose = "androidx.navigation:navigation-compose:2.7.7"
+        const val navigationCompose = "androidx.navigation:navigation-fragment-compose:2.8.0"
+    }
+
+    object Serialization {
+        const val serialization = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0"
     }
 }

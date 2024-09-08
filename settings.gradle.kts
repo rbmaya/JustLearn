@@ -15,7 +15,10 @@ pluginManagement {
                 useVersion("1.9.0")
             }
             if (requested.id.id.startsWith("dagger.hilt.android")) {
-                useModule("com.google.dagger:hilt-android-gradle-plugin:2.46")
+                useModule("com.google.dagger:hilt-android-gradle-plugin:2.49")
+            }
+            if (requested.id.id.startsWith("plugin.serialization")) {
+                useModule("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
             }
         }
     }

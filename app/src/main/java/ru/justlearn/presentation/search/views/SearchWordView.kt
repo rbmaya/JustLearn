@@ -32,7 +32,7 @@ fun SearchWordView(
     state: SearchWordState,
     onQueryChange: (String) -> Unit,
     onToggleSearch: (Boolean) -> Unit,
-    onWordClick: (String) -> Unit,
+    onWordClick: (Word) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -58,7 +58,7 @@ fun SearchWordView(
     ) { paddingValues ->
         LazyColumn(modifier = Modifier.padding(paddingValues)) {
             itemsIndexed(state.items) { index, item ->
-                SearchWordItem(word = item.value, onWordClick = onWordClick)
+                SearchWordItem(word = item, onWordClick = onWordClick)
                 if (index < state.items.lastIndex) {
                     HorizontalDivider(
                         modifier = Modifier
@@ -76,16 +76,16 @@ fun SearchWordView(
 fun SearchBarTrailingIcon(isLoading: Boolean) {
     if (isLoading) {
         CircularProgressIndicator(
-            strokeWidth = 2.dp,
+            strokeWidth = 1.dp,
             modifier = Modifier.size(24.dp)
         )
     }
 }
 
 @Composable
-fun SearchWordItem(word: String, onWordClick: (String) -> Unit) {
+fun SearchWordItem(word: Word, onWordClick: (Word) -> Unit) {
     ClickableText(
-        text = AnnotatedString(text = word),
+        text = AnnotatedString(text = word.value),
         modifier = Modifier
             .fillMaxWidth()
             .padding(12.dp),
@@ -104,7 +104,17 @@ fun SearchWordViewPreview() {
             state = SearchWordState(
                 isSearching = false,
                 query = "Hello World!",
-                items = listOf(Word(value = "hello")),
+                items = listOf(
+                    Word(
+                        id = "id",
+                        value = "hello",
+                        phonetic = "",
+                        audioUrl = null,
+                        meanings = emptyList(),
+                        synonyms = emptyList(),
+                        antonyms = emptyList(),
+                    )
+                ),
             ),
             onQueryChange = {},
             onToggleSearch = {},
