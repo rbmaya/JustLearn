@@ -1,14 +1,17 @@
 package ru.justlearn.presentation.search
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.supervisorScope
 import ru.justlearn.auxiliary.EventHandler
 import ru.justlearn.domain.search.WordsRepository
 import javax.inject.Inject
@@ -17,6 +20,11 @@ import javax.inject.Inject
 class SearchWordViewModel @Inject constructor(
     private val wordsRepository: WordsRepository,
 ) : ViewModel(), EventHandler<SearchWordEvent> {
+
+    private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
+        _screenState.update { it.copy(isSearching = false) }
+        Log.e("SearchWordViewModel", "Error during search", throwable)
+    }
 
     private val _screenState = MutableStateFlow(SearchWordState())
     val screenState = _screenState.asStateFlow()
@@ -32,6 +40,9 @@ class SearchWordViewModel @Inject constructor(
             is SearchWordEvent.QueryChanged -> {
                 searchWord(event.query)
             }
+            is SearchWordEvent.ClearQuery -> {
+                clearQuery()
+            }
         }
     }
 
@@ -39,12 +50,16 @@ class SearchWordViewModel @Inject constructor(
         _screenState.update { it.copy(query = query, isSearching = true) }
 
         searchJob?.cancel()
-        searchJob = viewModelScope.launch {
+        searchJob = viewModelScope.launch(exceptionHandler) {
             delay(SEARCH_DEBOUNCE_MS)
 
-            val wordsByQuery = wordsRepository.getWords(query)
+            val wordsByQuery = wordsRepository.getWords(query.trim())
             _screenState.update { it.copy(isSearching = false, items = wordsByQuery) }
         }
+    }
+
+    private fun clearQuery() {
+        _screenState.update { it.copy(query = "") }
     }
 
     companion object {

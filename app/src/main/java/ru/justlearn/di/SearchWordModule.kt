@@ -7,6 +7,7 @@ import dagger.hilt.android.components.ActivityComponent
 import dagger.hilt.components.SingletonComponent
 import ru.justlearn.data.search.MockWordsDataSource
 import ru.justlearn.data.search.WordsDataSource
+import ru.justlearn.data.search.WordsDataSourceImpl
 import ru.justlearn.data.search.WordsRepositoryImpl
 import ru.justlearn.domain.search.WordsRepository
 
@@ -21,6 +22,6 @@ class SearchWordModule {
         fun bindWordsRepository(impl: WordsRepositoryImpl): WordsRepository
 
         @Binds
-        fun bindWordsDataSource(impl: MockWordsDataSource): WordsDataSource
+        fun bindWordsDataSource(impl: WordsDataSourceImpl): WordsDataSource
     }
 }

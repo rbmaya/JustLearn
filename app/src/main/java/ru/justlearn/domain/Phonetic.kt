@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 @Parcelize
-data class Definition(
-    val definition: String,
-    val example: String?,
+data class Phonetic(
+    val phonetic: String,
+    val audioUrl: String?
 ): Parcelable

@@ -36,4 +36,13 @@ object Dependencies {
     object Serialization {
         const val serialization = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0"
     }
+
+    object Network {
+        private const val retrofitVersion = "2.11.0"
+
+        const val retrofit ="com.squareup.retrofit2:retrofit:$retrofitVersion"
+        const val gsonConverterFactory = "com.squareup.retrofit2:converter-gson:$retrofitVersion"
+        const val gson = "com.google.code.gson:gson:2.11.0"
+        const val loggingInterceptor = "com.squareup.okhttp3:logging-interceptor:4.11.0"
+    }
 }

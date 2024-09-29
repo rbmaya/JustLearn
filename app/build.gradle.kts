@@ -83,6 +83,11 @@ dependencies {
     implementation(Dependencies.Hilt.navigation)
     kapt(Dependencies.Hilt.compiler)
 
+    implementation(Dependencies.Network.retrofit)
+    implementation(Dependencies.Network.gsonConverterFactory)
+    implementation(Dependencies.Network.gson)
+    implementation(Dependencies.Network.loggingInterceptor)
+
     debugImplementation(Dependencies.Compose.uiTooling)
     debugImplementation(Dependencies.Compose.testManifest)
 }

@@ -9,8 +9,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import ru.justlearn.auxiliary.EventHandler
 import ru.justlearn.domain.Word
-import ru.justlearn.ui.helpers.WordUiMapper
-import javax.inject.Inject
 
 @HiltViewModel(assistedFactory = WordDetailsViewModel.WordDetailsViewModelFactory::class)
 class WordDetailsViewModel @AssistedInject constructor(
@@ -18,9 +16,7 @@ class WordDetailsViewModel @AssistedInject constructor(
 ) : ViewModel(), EventHandler<WordDetailsEvent> {
 
     private val _screenState = MutableStateFlow(
-        WordDetailsScreenState(
-            word = WordUiMapper.map(word)
-        )
+        WordDetailsScreenState(word = word)
     )
     val screenState = _screenState.asStateFlow()
 

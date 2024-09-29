@@ -7,6 +7,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 @Parcelize
 data class Meaning(
-    val partOfSpeech: PartOfSpeech,
+    val partOfSpeech: String,
     val definitions: List<Definition>,
+    val synonyms: List<String>,
+    val antonyms: List<String>,
 ): Parcelable

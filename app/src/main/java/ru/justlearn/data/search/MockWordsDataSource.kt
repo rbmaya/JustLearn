@@ -5,15 +5,18 @@ import kotlinx.coroutines.withContext
 import ru.justlearn.domain.Definition
 import ru.justlearn.domain.Meaning
 import ru.justlearn.domain.PartOfSpeech
+import ru.justlearn.domain.Phonetic
 import ru.justlearn.domain.Word
 import javax.inject.Inject
 
-class MockWordsDataSource @Inject constructor() : WordsDataSource {
+class MockWordsDataSource @Inject constructor(
+
+) : WordsDataSource {
 
     private val availableWords = listOf(MOCK_WORD)
 
     override suspend fun getWordsByQuery(query: String): List<Word> {
-        return withContext(Dispatchers.IO){
+        return withContext(Dispatchers.IO) {
             availableWords.filter {
                 it.value.contains(query, ignoreCase = true)
             }
@@ -24,11 +27,13 @@ class MockWordsDataSource @Inject constructor() : WordsDataSource {
         val MOCK_WORD = Word(
             id = "id",
             value = "get",
-            phonetic = "/ɡɛt/",
-            audioUrl = null,
+            phonetics = listOf(
+                Phonetic(phonetic = "/ɡɛt/", audioUrl = null),
+                Phonetic(phonetic = "/ɡɛt/", audioUrl = null),
+            ),
             meanings = listOf(
                 Meaning(
-                    partOfSpeech = PartOfSpeech.Verb,
+                    partOfSpeech = "verb",
                     definitions = listOf(
                         Definition(
                             definition = "To receive",
@@ -41,11 +46,13 @@ class MockWordsDataSource @Inject constructor() : WordsDataSource {
                         Definition(
                             definition = "To receive",
                             example = "He got a severe reprimand for that.",
-                        )
-                    )
+                        ),
+                    ),
+                    synonyms = listOf("arrive", "reach"),
+                    antonyms = listOf("lose"),
                 ),
                 Meaning(
-                    partOfSpeech = PartOfSpeech.Verb,
+                    partOfSpeech = "verb",
                     definitions = listOf(
                         Definition(
                             definition = "To receive",
@@ -59,11 +66,12 @@ class MockWordsDataSource @Inject constructor() : WordsDataSource {
                             definition = "To receive",
                             example = "He got a severe reprimand for that.",
                         )
-                    )
+                    ),
+                    synonyms = listOf("arrive", "reach"),
+                    antonyms = listOf("lose")
                 )
             ),
-            synonyms = listOf("arrive", "reach"),
-            antonyms = listOf("lose")
-        )
+
+            )
     }
 }

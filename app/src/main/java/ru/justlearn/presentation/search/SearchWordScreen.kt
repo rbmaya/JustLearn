@@ -19,6 +19,9 @@ fun SearchWordScreen(
             viewModel.obtainEvent(SearchWordEvent.QueryChanged(newValue))
         },
         onToggleSearch = {},
-        onWordClick = onWordClick
+        onWordClick = onWordClick,
+        onClearQuery = {
+            viewModel.obtainEvent(SearchWordEvent.ClearQuery)
+        }
     )
 }

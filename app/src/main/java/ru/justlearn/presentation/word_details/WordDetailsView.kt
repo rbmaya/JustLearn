@@ -1,22 +1,28 @@
 package ru.justlearn.presentation.word_details
 
 import androidx.annotation.StringRes
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material3.Button
+import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Card
+import androidx.compose.material3.ChipColors
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SmallFloatingActionButton
@@ -30,6 +36,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalConfiguration
@@ -47,15 +54,21 @@ import kotlinx.coroutines.launch
 import ru.justlearn.R
 import ru.justlearn.data.search.MockWordsDataSource
 import ru.justlearn.domain.Definition
-import ru.justlearn.presentation.word_details.model.UiMeaning
-import ru.justlearn.ui.helpers.WordUiMapper
+import ru.justlearn.domain.Phonetic
+import ru.justlearn.presentation.word_details.mapping.UiMeaning
+import ru.justlearn.presentation.word_details.mapping.WordUiMapper
+import ru.justlearn.ui.helpers.ifNotBlank
 import ru.justlearn.ui.theme.JustLearnTheme
 import ru.justlearn.ui.theme.Typography
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun WordDetailsView(
     state: WordDetailsScreenState,
-) = with(state) {
+) {
+    val word by remember {
+        mutableStateOf(WordUiMapper.map(state.word))
+    }
     val coroutineScope = rememberCoroutineScope()
 
     val screenHeightPx = with(LocalDensity.current) {
@@ -64,58 +77,41 @@ fun WordDetailsView(
     val scrollState = rememberScrollState()
     var floatingButtonIsVisible by remember { mutableStateOf(false) }
 
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .verticalScroll(scrollState)) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(scrollState)
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(24.dp)
         ) {
             Text(
-                modifier = Modifier.fillMaxWidth(),
-                text = word.value,
-                style = Typography.headlineMedium
-            )
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 12.dp)
                     .onGloballyPositioned { coordinates ->
                         val itemBounds = coordinates.boundsInWindow()
                         floatingButtonIsVisible =
                             !itemBounds.overlaps(Rect(0f, 0f, itemBounds.width, screenHeightPx))
+                    },
+                text = word.value,
+                style = Typography.headlineMedium
+            )
+            if (word.phonetics.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(12.dp))
+                FlowRow(modifier = Modifier.fillMaxWidth()) {
+                    word.phonetics.forEach { phonetic ->
+                        PhoneticChip(phonetic = phonetic)
+                        Spacer(modifier = Modifier.width(8.dp))
                     }
-            ) {
-                Button(onClick = { /*TODO*/ }) {
-                    Image(
-                        painter = painterResource(id = R.drawable.word_details_screen_sound_ic),
-                        contentDescription = null
-                    )
                 }
-                Text(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 24.dp),
-                    text = word.phonetic,
-                    style = Typography.headlineSmall,
-                    fontStyle = FontStyle.Italic
-                )
+                Spacer(modifier = Modifier.height(12.dp))
             }
             word.meanings.forEach { meaning ->
                 MeaningCard(word = word.value, meaning = meaning)
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(24.dp))
             }
-            RelatedWordsCard(
-                groupNameRes = R.string.word_details_screen_synonyms,
-                words = word.synonyms
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-            RelatedWordsCard(
-                groupNameRes = R.string.word_details_screen_antonyms,
-                words = word.antonyms
-            )
             Spacer(modifier = Modifier.height(24.dp))
         }
 
@@ -140,27 +136,81 @@ fun WordDetailsView(
 }
 
 @Composable
+fun PhoneticChip(phonetic: Phonetic) {
+    AssistChip(
+        modifier = Modifier
+            .clickable(enabled = phonetic.audioUrl != null) {},
+        shape = RoundedCornerShape(32.dp),
+        border = null,
+        label = {
+            Text(
+                modifier = Modifier.padding(8.dp),
+                text = phonetic.phonetic,
+                style = Typography.titleMedium,
+                fontStyle = FontStyle.Italic
+            )
+        },
+        colors = ChipColors(
+            containerColor = MaterialTheme.colorScheme.primary,
+            labelColor = MaterialTheme.colorScheme.onPrimary,
+            leadingIconContentColor = MaterialTheme.colorScheme.onPrimary,
+            trailingIconContentColor = MaterialTheme.colorScheme.onPrimary,
+            disabledContainerColor = MaterialTheme.colorScheme.onPrimary,
+            disabledLabelColor = MaterialTheme.colorScheme.onPrimary,
+            disabledLeadingIconContentColor = MaterialTheme.colorScheme.onPrimary,
+            disabledTrailingIconContentColor = MaterialTheme.colorScheme.onPrimary,
+        ),
+        leadingIcon = {
+            Image(
+                painter = painterResource(id = R.drawable.word_details_screen_sound_ic),
+                contentDescription = null,
+                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimary)
+            ).takeIf { phonetic.audioUrl != null }
+        },
+        onClick = {},
+    )
+}
+
+@Composable
 fun MeaningCard(word: String, meaning: UiMeaning) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
     ) {
-        Row(modifier = Modifier.fillMaxWidth()) {
+        Row(modifier = Modifier
+            .padding(12.dp)
+            .fillMaxWidth()) {
             Text(
-                modifier = Modifier.padding(24.dp),
                 text = word,
                 style = Typography.titleLarge
             )
             Text(
-                modifier = Modifier.padding(top = 24.dp),
+                modifier = Modifier.padding(start = 12.dp),
                 text = meaning.partOfSpeech,
-                style = Typography.titleLarge,
+                style = Typography.titleMedium,
+                fontStyle = FontStyle.Italic,
                 color = MaterialTheme.colorScheme.secondary
             )
         }
-        meaning.definitions.forEach { definition ->
+        meaning.definitions.forEachIndexed { index, definition ->
             DefinitionItem(definition = definition)
+            if (index != meaning.definitions.lastIndex) {
+                HorizontalDivider(modifier = Modifier.padding(horizontal = 12.dp))
+            }
         }
+        meaning.synonyms.ifNotBlank { synonyms ->
+            RelatedWordsCard(
+                groupNameRes = R.string.word_details_screen_synonyms,
+                words = synonyms
+            )
+        }
+        meaning.antonyms.ifNotBlank { antonyms ->
+            RelatedWordsCard(
+                groupNameRes = R.string.word_details_screen_antonyms,
+                words = antonyms
+            )
+        }
+        Spacer(modifier = Modifier.height(12.dp))
     }
 }
 
@@ -176,7 +226,12 @@ fun DefinitionItem(definition: Definition) {
             style = Typography.titleMedium,
             fontWeight = FontWeight.Bold
         )
-        Text(text = "• ${definition.example}")
+        definition.example.ifNotBlank {
+            Text(
+                fontStyle = FontStyle.Italic,
+                text = "• ${definition.example}"
+            )
+        }
     }
 }
 
@@ -186,7 +241,7 @@ fun RelatedWordsCard(@StringRes groupNameRes: Int, words: String) {
         Text(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(12.dp),
+                .padding(horizontal = 12.dp),
             text = buildAnnotatedString {
                 withStyle(
                     SpanStyle(
@@ -220,7 +275,7 @@ fun WordInfoViewPreview() {
     JustLearnTheme(darkTheme = false) {
         WordDetailsView(
             state = WordDetailsScreenState(
-                word = WordUiMapper.map(MockWordsDataSource.MOCK_WORD)
+                word = MockWordsDataSource.MOCK_WORD
             )
         )
     }

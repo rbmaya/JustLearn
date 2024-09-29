@@ -9,9 +9,6 @@ import kotlinx.serialization.Serializable
 data class Word(
     val id: String,
     val value: String,
-    val phonetic: String,
-    val audioUrl: String?,
+    val phonetics: List<Phonetic>,
     val meanings: List<Meaning>,
-    val synonyms: List<String>,
-    val antonyms: List<String>
 ): Parcelable

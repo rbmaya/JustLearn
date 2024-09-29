@@ -1,12 +1,16 @@
 package ru.justlearn.presentation.search.views
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.text.ClickableText
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.rounded.Clear
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -33,6 +37,7 @@ fun SearchWordView(
     onQueryChange: (String) -> Unit,
     onToggleSearch: (Boolean) -> Unit,
     onWordClick: (Word) -> Unit,
+    onClearQuery: () -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -48,7 +53,7 @@ fun SearchWordView(
                         contentDescription = "",
                     )
                 },
-                trailingIcon = { SearchBarTrailingIcon(isLoading = state.isSearching) },
+                trailingIcon = { SearchBarTrailingIcon(state, onClearQuery) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(12.dp),
@@ -73,25 +78,37 @@ fun SearchWordView(
 }
 
 @Composable
-fun SearchBarTrailingIcon(isLoading: Boolean) {
-    if (isLoading) {
-        CircularProgressIndicator(
-            strokeWidth = 1.dp,
-            modifier = Modifier.size(24.dp)
-        )
+fun SearchBarTrailingIcon(state: SearchWordState, onClearQuery: () -> Unit) {
+    when {
+        state.isSearching -> {
+            CircularProgressIndicator(
+                strokeWidth = 2.dp,
+                modifier = Modifier.size(24.dp)
+            )
+        }
+
+        state.query.isNotBlank() -> {
+            Image(
+                modifier = Modifier.clickable {
+                    onClearQuery.invoke()
+                },
+                imageVector = Icons.Rounded.Clear,
+                contentDescription = null
+            )
+        }
     }
 }
 
 @Composable
 fun SearchWordItem(word: Word, onWordClick: (Word) -> Unit) {
-    ClickableText(
+    Text(
         text = AnnotatedString(text = word.value),
         modifier = Modifier
             .fillMaxWidth()
+            .clickable {
+                onWordClick(word)
+            }
             .padding(12.dp),
-        onClick = {
-            onWordClick(word)
-        },
         style = Typography.bodyLarge
     )
 }
@@ -108,17 +125,15 @@ fun SearchWordViewPreview() {
                     Word(
                         id = "id",
                         value = "hello",
-                        phonetic = "",
-                        audioUrl = null,
+                        phonetics = emptyList(),
                         meanings = emptyList(),
-                        synonyms = emptyList(),
-                        antonyms = emptyList(),
                     )
                 ),
             ),
             onQueryChange = {},
             onToggleSearch = {},
             onWordClick = {},
+            onClearQuery = {},
         )
     }
 }
