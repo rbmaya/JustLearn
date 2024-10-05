@@ -65,6 +65,7 @@ import ru.justlearn.ui.theme.Typography
 @Composable
 fun WordDetailsView(
     state: WordDetailsScreenState,
+    onAudioClick: (String) -> Unit,
 ) {
     val word by remember {
         mutableStateOf(WordUiMapper.map(state.word))
@@ -102,7 +103,7 @@ fun WordDetailsView(
                 Spacer(modifier = Modifier.height(12.dp))
                 FlowRow(modifier = Modifier.fillMaxWidth()) {
                     word.phonetics.forEach { phonetic ->
-                        PhoneticChip(phonetic = phonetic)
+                        PhoneticChip(phonetic = phonetic, onClick = onAudioClick)
                         Spacer(modifier = Modifier.width(8.dp))
                     }
                 }
@@ -136,10 +137,8 @@ fun WordDetailsView(
 }
 
 @Composable
-fun PhoneticChip(phonetic: Phonetic) {
+fun PhoneticChip(phonetic: Phonetic, onClick: (String) -> Unit) {
     AssistChip(
-        modifier = Modifier
-            .clickable(enabled = phonetic.audioUrl != null) {},
         shape = RoundedCornerShape(32.dp),
         border = null,
         label = {
@@ -155,7 +154,7 @@ fun PhoneticChip(phonetic: Phonetic) {
             labelColor = MaterialTheme.colorScheme.onPrimary,
             leadingIconContentColor = MaterialTheme.colorScheme.onPrimary,
             trailingIconContentColor = MaterialTheme.colorScheme.onPrimary,
-            disabledContainerColor = MaterialTheme.colorScheme.onPrimary,
+            disabledContainerColor = MaterialTheme.colorScheme.primary,
             disabledLabelColor = MaterialTheme.colorScheme.onPrimary,
             disabledLeadingIconContentColor = MaterialTheme.colorScheme.onPrimary,
             disabledTrailingIconContentColor = MaterialTheme.colorScheme.onPrimary,
@@ -167,7 +166,10 @@ fun PhoneticChip(phonetic: Phonetic) {
                 colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimary)
             ).takeIf { phonetic.audioUrl != null }
         },
-        onClick = {},
+        enabled = !phonetic.audioUrl.isNullOrBlank(),
+        onClick = {
+            phonetic.audioUrl?.let { onClick(it) }
+        },
     )
 }
 
@@ -177,9 +179,11 @@ fun MeaningCard(word: String, meaning: UiMeaning) {
         modifier = Modifier
             .fillMaxWidth()
     ) {
-        Row(modifier = Modifier
-            .padding(12.dp)
-            .fillMaxWidth()) {
+        Row(
+            modifier = Modifier
+                .padding(12.dp)
+                .fillMaxWidth()
+        ) {
             Text(
                 text = word,
                 style = Typography.titleLarge
@@ -276,7 +280,8 @@ fun WordInfoViewPreview() {
         WordDetailsView(
             state = WordDetailsScreenState(
                 word = MockWordsDataSource.MOCK_WORD
-            )
+            ),
+            onAudioClick = {},
         )
     }
 }

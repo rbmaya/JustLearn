@@ -8,5 +8,10 @@ import androidx.compose.runtime.getValue
 fun WordDetailsScreen(viewModel: WordDetailsViewModel) {
     val state by viewModel.screenState.collectAsState()
 
-    WordDetailsView(state = state)
+    WordDetailsView(
+        state = state,
+        onAudioClick = { url ->
+            viewModel.obtainEvent(WordDetailsEvent.PlayAudio(url))
+        }
+    )
 }
