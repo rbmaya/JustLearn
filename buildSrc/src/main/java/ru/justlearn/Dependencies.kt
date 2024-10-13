@@ -12,7 +12,8 @@ object Dependencies {
         const val ui = "androidx.compose.ui:ui"
         const val uiGraphics = "androidx.compose.ui:ui-graphics"
         const val toolingPreview = "androidx.compose.ui:ui-tooling-preview"
-        const val material = "androidx.compose.material3:material3:1.2.1"
+        const val material3 = "androidx.compose.material3:material3:1.2.1"
+        const val material = "androidx.compose.material:material:1.7.3"
         const val uiTooling = "androidx.compose.ui:ui-tooling"
         const val testManifest = "androidx.compose.ui:ui-test-manifest"
     }

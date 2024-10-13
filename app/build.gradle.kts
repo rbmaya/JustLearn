@@ -70,6 +70,7 @@ dependencies {
     implementation(Dependencies.Compose.ui)
     implementation(Dependencies.Compose.uiGraphics)
     implementation(Dependencies.Compose.toolingPreview)
+    implementation(Dependencies.Compose.material3)
     implementation(Dependencies.Compose.material)
 
     implementation(Dependencies.Lifecycle.lifecycleKtx)

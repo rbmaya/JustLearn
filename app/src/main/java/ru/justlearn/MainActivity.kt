@@ -1,38 +1,39 @@
 package ru.justlearn
 
 import android.os.Bundle
-import android.transition.Transition
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.core.ArcAnimationSpec
 import androidx.compose.animation.core.EaseIn
 import androidx.compose.animation.core.EaseOut
-import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.BottomNavigation
+import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.res.painterResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import dagger.hilt.android.AndroidEntryPoint
 import ru.justlearn.domain.Word
 import ru.justlearn.presentation.navigation.Route
+import ru.justlearn.presentation.navigation.TopLevelRoutes
 import ru.justlearn.presentation.search.SearchWordScreen
 import ru.justlearn.presentation.search.SearchWordViewModel
 import ru.justlearn.presentation.word_details.WordDetailsScreen
 import ru.justlearn.presentation.word_details.WordDetailsViewModel
 import ru.justlearn.ui.navigation.CustomNavType
-import ru.justlearn.ui.navigation.navigate
 import ru.justlearn.ui.theme.JustLearnTheme
 import kotlin.reflect.typeOf
 
@@ -45,7 +46,45 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
 
                 Surface(modifier = Modifier.fillMaxSize()) {
-                    Scaffold { innerPadding ->
+                    Scaffold(
+                        bottomBar = {
+                            BottomNavigation(
+                                backgroundColor = MaterialTheme.colorScheme.primary,
+                            ) {
+                                val navBackStackEntry = navController.currentBackStackEntryAsState()
+                                val currentRoute = navBackStackEntry.value?.destination?.route
+
+                                TopLevelRoutes.forEach { topLevelRoute ->
+                                    BottomNavigationItem(
+                                        icon = {
+                                            Image(
+                                                painter = painterResource(topLevelRoute.iconRes!!),
+                                                contentDescription = topLevelRoute.name!!,
+                                                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimary)
+                                            )
+                                        },
+                                        label = {
+                                            Text(
+                                                topLevelRoute.name!!,
+                                                style = MaterialTheme.typography.labelSmall,
+                                                color = MaterialTheme.colorScheme.onPrimary
+                                            )
+                                        },
+                                        selected = currentRoute == topLevelRoute::class.qualifiedName,
+                                        onClick = {
+                                            navController.navigate(topLevelRoute) {
+                                                popUpTo(navController.graph.startDestinationId) {
+                                                    saveState = true
+                                                }
+                                                launchSingleTop = true
+                                                restoreState = true
+                                            }
+                                        },
+                                    )
+                                }
+                            }
+                        }
+                    ) { innerPadding ->
                         NavHost(
                             navController = navController,
                             startDestination = Route.Search,
@@ -85,6 +124,9 @@ class MainActivity : ComponentActivity() {
                                         factory.create(word)
                                     }
                                 )
+                            }
+                            composable<Route.SavedWords> {
+
                             }
                         }
                     }
