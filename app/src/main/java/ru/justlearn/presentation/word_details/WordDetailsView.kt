@@ -154,17 +154,19 @@ fun PhoneticChip(phonetic: Phonetic, onClick: (String) -> Unit) {
             labelColor = MaterialTheme.colorScheme.onPrimary,
             leadingIconContentColor = MaterialTheme.colorScheme.onPrimary,
             trailingIconContentColor = MaterialTheme.colorScheme.onPrimary,
-            disabledContainerColor = MaterialTheme.colorScheme.primary,
-            disabledLabelColor = MaterialTheme.colorScheme.onPrimary,
-            disabledLeadingIconContentColor = MaterialTheme.colorScheme.onPrimary,
-            disabledTrailingIconContentColor = MaterialTheme.colorScheme.onPrimary,
+            disabledContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+            disabledLabelColor = MaterialTheme.colorScheme.onSecondaryContainer,
+            disabledLeadingIconContentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+            disabledTrailingIconContentColor = MaterialTheme.colorScheme.onSecondaryContainer,
         ),
         leadingIcon = {
-            Image(
-                painter = painterResource(id = R.drawable.word_details_screen_sound_ic),
-                contentDescription = null,
-                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimary)
-            ).takeIf { !phonetic.audioUrl.isNullOrBlank() }
+            if (!phonetic.audioUrl.isNullOrBlank()) {
+                Image(
+                    painter = painterResource(id = R.drawable.word_details_screen_sound_ic),
+                    contentDescription = null,
+                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimary)
+                )
+            }
         },
         enabled = !phonetic.audioUrl.isNullOrBlank(),
         onClick = {
