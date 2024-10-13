@@ -164,7 +164,7 @@ fun PhoneticChip(phonetic: Phonetic, onClick: (String) -> Unit) {
                 painter = painterResource(id = R.drawable.word_details_screen_sound_ic),
                 contentDescription = null,
                 colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimary)
-            ).takeIf { phonetic.audioUrl != null }
+            ).takeIf { !phonetic.audioUrl.isNullOrBlank() }
         },
         enabled = !phonetic.audioUrl.isNullOrBlank(),
         onClick = {
