@@ -40,6 +40,7 @@ class SearchWordViewModel @Inject constructor(
             is SearchWordEvent.QueryChanged -> {
                 searchWord(event.query)
             }
+
             is SearchWordEvent.ClearQuery -> {
                 clearQuery()
             }
@@ -59,7 +60,12 @@ class SearchWordViewModel @Inject constructor(
     }
 
     private fun clearQuery() {
-        _screenState.update { it.copy(query = "") }
+        _screenState.update {
+            it.copy(
+                query = "",
+                items = emptyList()
+            )
+        }
     }
 
     companion object {
