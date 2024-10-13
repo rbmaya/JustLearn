@@ -2,6 +2,7 @@ package ru.justlearn.presentation.search.views
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -27,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import ru.justlearn.R
 import ru.justlearn.domain.Word
 import ru.justlearn.presentation.search.SearchWordState
+import ru.justlearn.ui.components.EmptySearchResultView
 import ru.justlearn.ui.theme.JustLearnTheme
 import ru.justlearn.ui.theme.Typography
 
@@ -73,6 +75,9 @@ fun SearchWordView(
                     )
                 }
             }
+        }
+        if (state.showPlaceholder) {
+            EmptySearchResultView(modifier = Modifier.fillMaxSize())
         }
     }
 }

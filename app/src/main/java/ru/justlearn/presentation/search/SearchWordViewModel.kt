@@ -48,14 +48,22 @@ class SearchWordViewModel @Inject constructor(
     }
 
     private fun searchWord(query: String) {
-        _screenState.update { it.copy(query = query, isSearching = true) }
+        _screenState.update { it.copy(query = query) }
 
         searchJob?.cancel()
         searchJob = viewModelScope.launch(exceptionHandler) {
             delay(SEARCH_DEBOUNCE_MS)
+            _screenState.update { it.copy(isSearching = true) }
 
             val wordsByQuery = wordsRepository.getWords(query.trim())
-            _screenState.update { it.copy(isSearching = false, items = wordsByQuery) }
+
+            _screenState.update {
+                it.copy(
+                    isSearching = false,
+                    items = wordsByQuery,
+                    showPlaceholder = wordsByQuery.isEmpty() && query.isNotBlank()
+                )
+            }
         }
     }
 
@@ -63,7 +71,8 @@ class SearchWordViewModel @Inject constructor(
         _screenState.update {
             it.copy(
                 query = "",
-                items = emptyList()
+                items = emptyList(),
+                showPlaceholder = false,
             )
         }
     }

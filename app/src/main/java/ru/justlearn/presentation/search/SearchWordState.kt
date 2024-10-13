@@ -6,4 +6,5 @@ data class SearchWordState(
     val isSearching: Boolean = false,
     val query: String = "",
     val items: List<Word> = emptyList(),
+    val showPlaceholder: Boolean = false,
 )
