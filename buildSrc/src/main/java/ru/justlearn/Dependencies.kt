@@ -46,4 +46,11 @@ object Dependencies {
         const val gson = "com.google.code.gson:gson:2.11.0"
         const val loggingInterceptor = "com.squareup.okhttp3:logging-interceptor:4.11.0"
     }
+
+    object Room {
+        private const val roomVersion = "2.6.1"
+
+        const val room = "androidx.room:room-runtime:$roomVersion"
+        const val compiler = "androidx.room:room-compiler:$roomVersion"
+    }
 }

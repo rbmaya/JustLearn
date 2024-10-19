@@ -1,10 +1,18 @@
+import ru.justlearn.Android
+import ru.justlearn.Compose
+import ru.justlearn.DaggerHilt
 import ru.justlearn.Dependencies
+import ru.justlearn.Lifecycle
+import ru.justlearn.Navigation
+import ru.justlearn.Network
+import ru.justlearn.Room
+import ru.justlearn.Serialization
 
 plugins {
     id("com.android.application")
     id("dagger.hilt.android.plugin")
+    id("com.google.devtools.ksp")
     kotlin("android")
-    kotlin("kapt")
     kotlin("plugin.serialization")
     kotlin("plugin.parcelize")
 }
@@ -58,37 +66,15 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
-    kapt {
-        correctErrorTypes = true
-    }
 }
 
 dependencies {
-    implementation(Dependencies.Android.coreKtx)
-
-    implementation(Dependencies.Compose.activity)
-    implementation(Dependencies.Compose.ui)
-    implementation(Dependencies.Compose.uiGraphics)
-    implementation(Dependencies.Compose.toolingPreview)
-    implementation(Dependencies.Compose.material3)
-    implementation(Dependencies.Compose.material)
-
-    implementation(Dependencies.Lifecycle.lifecycleKtx)
-    implementation(Dependencies.Lifecycle.composeViewModel)
-
-    implementation(Dependencies.Navigation.navigationCompose)
-
-    implementation(Dependencies.Serialization.serialization)
-
-    implementation(Dependencies.Hilt.android)
-    implementation(Dependencies.Hilt.navigation)
-    kapt(Dependencies.Hilt.compiler)
-
-    implementation(Dependencies.Network.retrofit)
-    implementation(Dependencies.Network.gsonConverterFactory)
-    implementation(Dependencies.Network.gson)
-    implementation(Dependencies.Network.loggingInterceptor)
-
-    debugImplementation(Dependencies.Compose.uiTooling)
-    debugImplementation(Dependencies.Compose.testManifest)
+    Android()
+    Compose()
+    Lifecycle()
+    Navigation()
+    Serialization()
+    DaggerHilt()
+    Network()
+    Room()
 }

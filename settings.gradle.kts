@@ -20,6 +20,9 @@ pluginManagement {
             if (requested.id.id.startsWith("plugin.serialization")) {
                 useModule("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
             }
+            if (requested.id.id.startsWith("com.google.devtools.ksp")) {
+                useVersion("1.9.10-1.0.13")
+            }
         }
     }
 }
