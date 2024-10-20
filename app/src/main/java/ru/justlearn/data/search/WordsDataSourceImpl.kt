@@ -2,9 +2,8 @@ package ru.justlearn.data.search
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import ru.justlearn.data.mappers.WordWebMapper
+import ru.justlearn.data.mappers.web.WordWebMapper
 import ru.justlearn.domain.Word
-import java.util.UUID
 import javax.inject.Inject
 
 class WordsDataSourceImpl @Inject constructor(

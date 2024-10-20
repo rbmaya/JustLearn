@@ -4,7 +4,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import ru.justlearn.domain.Definition
 import ru.justlearn.domain.Meaning
-import ru.justlearn.domain.PartOfSpeech
 import ru.justlearn.domain.Phonetic
 import ru.justlearn.domain.Word
 import javax.inject.Inject

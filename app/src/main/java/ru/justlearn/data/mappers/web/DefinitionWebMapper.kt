@@ -1,4 +1,4 @@
-package ru.justlearn.data.mappers
+package ru.justlearn.data.mappers.web
 
 import ru.justlearn.auxiliary.Mapper
 import ru.justlearn.data.model.DefinitionWebModel
