@@ -9,7 +9,7 @@ import ru.justlearn.data.saved.entities.DefinitionEntity
 interface DefinitionDao {
 
     @Query("SELECT * FROM DefinitionEntity WHERE meaningId=(:meaningId)")
-    suspend fun getDefinitionsByMeaningId(meaningId: Int): List<DefinitionEntity>
+    suspend fun getDefinitionsByMeaningId(meaningId: Long): List<DefinitionEntity>
 
     @Insert
     suspend fun addDefinition(entity: DefinitionEntity)

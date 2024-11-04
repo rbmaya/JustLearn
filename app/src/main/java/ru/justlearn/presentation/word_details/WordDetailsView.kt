@@ -2,41 +2,55 @@ package ru.justlearn.presentation.word_details
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Card
 import androidx.compose.material3.ChipColors
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SmallFloatingActionButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.positionInWindow
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -45,6 +59,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import ru.justlearn.R
@@ -52,80 +67,154 @@ import ru.justlearn.data.search.MockWordsDataSource
 import ru.justlearn.domain.Definition
 import ru.justlearn.domain.Phonetic
 import ru.justlearn.presentation.word_details.mapping.UiMeaning
+import ru.justlearn.presentation.word_details.mapping.UiWord
 import ru.justlearn.presentation.word_details.mapping.WordUiMapper
 import ru.justlearn.ui.helpers.ifNotBlank
 import ru.justlearn.ui.theme.JustLearnTheme
 import ru.justlearn.ui.theme.Typography
 
-@OptIn(ExperimentalLayoutApi::class)
+@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun WordDetailsView(
     state: WordDetailsScreenState,
-    onAudioClick: (String) -> Unit,
+    onAudioClick: (url: String) -> Unit,
+    onSaveClick: () -> Unit,
+    onBackClick: () -> Unit,
 ) {
     val word by remember {
         mutableStateOf(WordUiMapper.map(state.word))
     }
     val coroutineScope = rememberCoroutineScope()
 
-    val scrollState = rememberScrollState()
-    var floatingButtonIsVisible by remember { mutableStateOf(true) }
+    val scrollAppBarBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
+    val scrollContentState = rememberLazyListState()
+    var floatingButtonIsVisible by remember { mutableStateOf(false) }
 
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(scrollState)
-                .padding(24.dp)
-        ) {
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .onGloballyPositioned { coordinates ->
-                        floatingButtonIsVisible = coordinates.positionInWindow().y < 0
-                    },
-                text = word.value,
-                style = Typography.headlineMedium
+    Scaffold(
+        modifier = Modifier.nestedScroll(scrollAppBarBehavior.nestedScrollConnection),
+        topBar = {
+            AppBar(
+                word = word,
+                initialSaveStateProgress = state.initialSaveStateProgress,
+                wordIsSaved = state.isSaved,
+                scrollAppBarBehavior = scrollAppBarBehavior,
+                onAudioClick = onAudioClick,
+                onSaveClick = onSaveClick,
+                onBackClick = onBackClick,
             )
-            if (word.phonetics.isNotEmpty()) {
-                Spacer(modifier = Modifier.height(12.dp))
-                FlowRow(modifier = Modifier.fillMaxWidth()) {
-                    word.phonetics.forEach { phonetic ->
-                        PhoneticChip(phonetic = phonetic, onClick = onAudioClick)
-                        Spacer(modifier = Modifier.width(8.dp))
-                    }
+        },
+        floatingActionButton = {
+            if (floatingButtonIsVisible) {
+                FloatingActionButton(
+                    onClick = {
+                        coroutineScope.launch {
+                            scrollAppBarBehavior.state.heightOffset = 0f
+                            scrollContentState.animateScrollToItem(0)
+                        }
+                    },
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.KeyboardArrowUp,
+                        contentDescription = null
+                    )
                 }
-                Spacer(modifier = Modifier.height(12.dp))
-            } else {
-                Spacer(modifier = Modifier.height(12.dp))
             }
-            word.meanings.forEach { meaning ->
-                MeaningCard(word = word.value, meaning = meaning)
-                Spacer(modifier = Modifier.height(24.dp))
-            }
-            Spacer(modifier = Modifier.height(24.dp))
         }
-
-        if (floatingButtonIsVisible) {
-            SmallFloatingActionButton(
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(24.dp),
-                onClick = {
-                    coroutineScope.launch {
-                        scrollState.animateScrollTo(0)
-                    }
-                },
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.KeyboardArrowUp,
-                    contentDescription = null
+    ) { innerPadding ->
+        LazyColumn(
+            state = scrollContentState,
+            modifier = Modifier
+                .padding(
+                    start = 24.dp + innerPadding.calculateStartPadding(LayoutDirection.Ltr),
+                    top = 24.dp + innerPadding.calculateTopPadding(),
+                    end = 24.dp + innerPadding.calculateEndPadding(LayoutDirection.Ltr),
+                    bottom = 24.dp + innerPadding.calculateBottomPadding()
                 )
+        ) {
+            itemsIndexed(word.meanings) { index, meaning ->
+                MeaningCard(word = word.value, meaning = meaning)
+                val offsetSize = if (index == word.meanings.lastIndex) 48.dp else 24.dp
+                Spacer(modifier = Modifier.height(offsetSize))
             }
         }
     }
+
+    LaunchedEffect(scrollContentState) {
+        snapshotFlow { scrollContentState.canScrollBackward }
+            .collect { canScrollBackward ->
+                floatingButtonIsVisible = canScrollBackward
+            }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
+@Composable
+fun AppBar(
+    word: UiWord,
+    initialSaveStateProgress: Boolean,
+    wordIsSaved: Boolean,
+    scrollAppBarBehavior: TopAppBarScrollBehavior,
+    onAudioClick: (String) -> Unit,
+    onSaveClick: () -> Unit,
+    onBackClick: () -> Unit,
+) {
+    LargeTopAppBar(
+        title = {
+            Column {
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    text = word.value,
+                    style = Typography.headlineMedium
+                )
+                val appbarExpandedFraction = 1 - scrollAppBarBehavior.state.collapsedFraction
+                if (word.phonetics.isNotEmpty() && appbarExpandedFraction > 0.5f) {
+                    FlowRow(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .alpha(appbarExpandedFraction)
+                    ) {
+                        word.phonetics.forEach { phonetic ->
+                            PhoneticChip(phonetic = phonetic, onClick = onAudioClick)
+                            Spacer(modifier = Modifier.width(8.dp))
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(12.dp))
+                }
+            }
+        },
+        navigationIcon = {
+            IconButton(
+                onClick = { onBackClick() },
+            ) {
+                Icon(
+                    modifier = Modifier.size(30.dp),
+                    imageVector = Icons.AutoMirrored.Default.ArrowBack,
+                    contentDescription = null
+                )
+            }
+        },
+        actions = {
+            if (!initialSaveStateProgress) {
+                IconButton(
+                    onClick = {
+                        onSaveClick()
+                    },
+                ) {
+                    Icon(
+                        modifier = Modifier.size(30.dp),
+                        imageVector = if (wordIsSaved) {
+                            Icons.Filled.Favorite
+                        } else {
+                            Icons.Filled.FavoriteBorder
+                        },
+                        contentDescription = null
+                    )
+                }
+            }
+        },
+        scrollBehavior = scrollAppBarBehavior
+    )
 }
 
 @Composable
@@ -168,11 +257,11 @@ fun PhoneticChip(phonetic: Phonetic, onClick: (String) -> Unit) {
 }
 
 @Composable
-fun MeaningCard(word: String, meaning: UiMeaning) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-    ) {
+fun MeaningCard(
+    word: String,
+    meaning: UiMeaning
+) {
+    Card(modifier = Modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier
                 .padding(12.dp)
@@ -273,9 +362,13 @@ fun WordInfoViewPreview() {
     JustLearnTheme(darkTheme = false) {
         WordDetailsView(
             state = WordDetailsScreenState(
-                word = MockWordsDataSource.MOCK_WORD
+                word = MockWordsDataSource.MOCK_WORD,
+                isSaved = true,
+                initialSaveStateProgress = false
             ),
             onAudioClick = {},
+            onSaveClick = {},
+            onBackClick = {}
         )
     }
 }

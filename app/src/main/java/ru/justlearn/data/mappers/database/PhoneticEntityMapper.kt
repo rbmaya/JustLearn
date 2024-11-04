@@ -5,7 +5,7 @@ import ru.justlearn.domain.Phonetic
 
 object PhoneticEntityMapper {
 
-    fun mapToEntity(wordId: Int, phonetic: Phonetic): PhoneticEntity = with(phonetic) {
+    fun mapToEntity(wordId: Long, phonetic: Phonetic): PhoneticEntity = with(phonetic) {
         PhoneticEntity(
             wordId = wordId,
             phonetic = this.phonetic,

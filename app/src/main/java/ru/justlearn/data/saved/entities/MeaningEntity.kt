@@ -21,7 +21,7 @@ import androidx.room.PrimaryKey
 )
 data class MeaningEntity(
     @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
-    val wordId: Int,
+    val id: Long = 0,
+    val wordId: Long,
     val partOfSpeech: String,
 )

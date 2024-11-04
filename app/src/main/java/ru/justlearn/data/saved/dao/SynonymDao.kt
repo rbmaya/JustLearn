@@ -9,7 +9,7 @@ import ru.justlearn.data.saved.entities.SynonymEntity
 interface SynonymDao {
 
     @Query("SELECT * FROM SynonymEntity WHERE meaningId=(:meaningId)")
-    suspend fun getSynonymsByMeaningId(meaningId: Int): List<SynonymEntity>
+    suspend fun getSynonymsByMeaningId(meaningId: Long): List<SynonymEntity>
 
     @Insert
     suspend fun addSynonym(entity: SynonymEntity)

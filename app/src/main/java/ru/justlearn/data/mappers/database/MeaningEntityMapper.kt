@@ -9,7 +9,7 @@ import ru.justlearn.domain.Meaning
 object MeaningEntityMapper {
 
     fun mapToEntity(
-        wordId: Int,
+        wordId: Long,
         meaning: Meaning
     ): MeaningEntity = with(meaning) {
         MeaningEntity(

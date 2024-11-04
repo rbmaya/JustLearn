@@ -9,7 +9,7 @@ import ru.justlearn.data.saved.entities.PhoneticEntity
 interface PhoneticDao {
 
     @Query("SELECT * FROM PhoneticEntity WHERE wordId=(:wordId)")
-    suspend fun getPhoneticsByWordId(wordId: Int): List<PhoneticEntity>
+    suspend fun getPhoneticsByWordId(wordId: Long): List<PhoneticEntity>
 
     @Insert
     suspend fun addPhonetic(entity: PhoneticEntity)

@@ -1,7 +1,6 @@
 import ru.justlearn.Android
 import ru.justlearn.Compose
 import ru.justlearn.DaggerHilt
-import ru.justlearn.Dependencies
 import ru.justlearn.Lifecycle
 import ru.justlearn.Navigation
 import ru.justlearn.Network
@@ -15,6 +14,11 @@ plugins {
     kotlin("android")
     kotlin("plugin.serialization")
     kotlin("plugin.parcelize")
+    id("androidx.room")
+}
+
+room {
+    schemaDirectory("$projectDir/schemas")
 }
 
 repositories {

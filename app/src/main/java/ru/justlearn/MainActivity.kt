@@ -122,6 +122,9 @@ class MainActivity : ComponentActivity() {
                                 WordDetailsScreen(
                                     viewModel = hiltViewModel<WordDetailsViewModel, WordDetailsViewModel.WordDetailsViewModelFactory> { factory ->
                                         factory.create(word)
+                                    },
+                                    onBackClicked = {
+                                        navController.popBackStack()
                                     }
                                 )
                             }

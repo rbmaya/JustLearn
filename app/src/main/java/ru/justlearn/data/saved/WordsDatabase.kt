@@ -2,7 +2,6 @@ package ru.justlearn.data.saved
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import dagger.BindsInstance
 import ru.justlearn.data.saved.dao.AntonymDao
 import ru.justlearn.data.saved.dao.DefinitionDao
 import ru.justlearn.data.saved.dao.MeaningDao
@@ -29,21 +28,15 @@ import ru.justlearn.data.saved.entities.WordEntity
 )
 abstract class WordsDatabase: RoomDatabase() {
 
-    @BindsInstance
     abstract fun getWordDao(): WordDao
 
-    @BindsInstance
     abstract fun getMeaningDao(): MeaningDao
 
-    @BindsInstance
     abstract fun getDefinitionDao(): DefinitionDao
 
-    @BindsInstance
     abstract fun getPhoneticDao(): PhoneticDao
 
-    @BindsInstance
     abstract fun getSynonymDao(): SynonymDao
 
-    @BindsInstance
     abstract fun getAntonymDao(): AntonymDao
 }

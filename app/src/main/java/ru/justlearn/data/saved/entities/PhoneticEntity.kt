@@ -21,8 +21,8 @@ import androidx.room.PrimaryKey
 )
 data class PhoneticEntity(
     @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
-    val wordId: Int,
+    val id: Long = 0,
+    val wordId: Long,
     val phonetic: String,
     val audioUrl: String?
 )

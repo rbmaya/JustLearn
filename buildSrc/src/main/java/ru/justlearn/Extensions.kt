@@ -75,6 +75,7 @@ fun DependencyHandler.Network() {
 
 fun DependencyHandler.Room() {
     implementation(Dependencies.Room.room)
+    implementation(Dependencies.Room.ktx)
     ksp(Dependencies.Room.compiler)
 }
 

@@ -9,7 +9,7 @@ import ru.justlearn.data.saved.entities.AntonymEntity
 interface AntonymDao {
 
     @Query("SELECT * FROM AntonymEntity WHERE meaningId=(:meaningId)")
-    fun getAntonymsByMeaningId(meaningId: Int): List<AntonymEntity>
+    fun getAntonymsByMeaningId(meaningId: Long): List<AntonymEntity>
 
     @Insert
     fun addAntonym(entity: AntonymEntity)

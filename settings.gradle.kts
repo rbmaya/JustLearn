@@ -23,6 +23,9 @@ pluginManagement {
             if (requested.id.id.startsWith("com.google.devtools.ksp")) {
                 useVersion("1.9.10-1.0.13")
             }
+            if (requested.id.id.startsWith("androidx.room")) {
+                useVersion("2.6.1")
+            }
         }
     }
 }

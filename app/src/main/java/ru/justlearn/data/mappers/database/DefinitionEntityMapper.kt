@@ -5,7 +5,7 @@ import ru.justlearn.domain.Definition
 
 object DefinitionEntityMapper {
 
-    fun mapToEntity(meaningId: Int, definition: Definition): DefinitionEntity = with(definition) {
+    fun mapToEntity(meaningId: Long, definition: Definition): DefinitionEntity = with(definition) {
         DefinitionEntity(
             meaningId = meaningId,
             definition = this.definition,

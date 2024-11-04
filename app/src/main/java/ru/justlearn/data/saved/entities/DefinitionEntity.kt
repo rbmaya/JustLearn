@@ -21,8 +21,8 @@ import androidx.room.PrimaryKey
 )
 data class DefinitionEntity(
     @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
-    val meaningId: Int,
+    val id: Long = 0,
+    val meaningId: Long,
     val definition: String,
     val example: String?
 )

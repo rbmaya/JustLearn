@@ -9,8 +9,8 @@ import ru.justlearn.data.saved.entities.MeaningEntity
 interface MeaningDao {
 
     @Query("SELECT * FROM MeaningEntity WHERE wordId=(:wordId)")
-    suspend fun getMeaningsByWordId(wordId: Int): List<MeaningEntity>
+    suspend fun getMeaningsByWordId(wordId: Long): List<MeaningEntity>
 
     @Insert
-    suspend fun addMeaning(entity: MeaningEntity): Int
+    suspend fun addMeaning(entity: MeaningEntity): Long
 }

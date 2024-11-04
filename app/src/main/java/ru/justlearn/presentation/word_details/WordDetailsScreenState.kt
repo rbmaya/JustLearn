@@ -4,4 +4,6 @@ import ru.justlearn.domain.Word
 
 data class WordDetailsScreenState(
     val word: Word,
+    val isSaved: Boolean,
+    val initialSaveStateProgress: Boolean,
 )

@@ -21,9 +21,9 @@ object WordEntityMapper {
         wordEntity: WordEntity,
         phoneticEntities: List<PhoneticEntity>,
         meaningEntities: List<MeaningEntity>,
-        definitionsByMeanings: Map<Int, List<DefinitionEntity>>,
-        synonymsByMeanings: Map<Int, List<SynonymEntity>>,
-        antonymsByMeanings: Map<Int, List<AntonymEntity>>,
+        definitionsByMeanings: Map<Long, List<DefinitionEntity>>,
+        synonymsByMeanings: Map<Long, List<SynonymEntity>>,
+        antonymsByMeanings: Map<Long, List<AntonymEntity>>,
         ): Word = with(wordEntity) {
         val wordId = UUID.randomUUID().toString()
         Word(
