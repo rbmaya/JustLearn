@@ -8,4 +8,6 @@
     <string name="word_details_screen_synonyms">Synonyms:\n</string>
     <string name="word_details_screen_antonyms">Antonyms:\n</string>
 
+    <string name="saved_word_list_no_words">You haven\'t saved any words yet!</string>
+
 </resources>

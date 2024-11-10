@@ -6,13 +6,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Clear
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
@@ -20,15 +17,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ru.justlearn.R
 import ru.justlearn.domain.Word
 import ru.justlearn.presentation.search.SearchWordState
 import ru.justlearn.ui.components.EmptySearchResultView
+import ru.justlearn.ui.components.WordListView
 import ru.justlearn.ui.theme.JustLearnTheme
-import ru.justlearn.ui.theme.Typography
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -61,18 +57,8 @@ fun SearchWordView(
             ) {}
         }
     ) { paddingValues ->
-        LazyColumn(modifier = Modifier.padding(paddingValues)) {
-            itemsIndexed(state.items) { index, item ->
-                SearchWordItem(word = item, onWordClick = onWordClick)
-                if (index < state.items.lastIndex) {
-                    HorizontalDivider(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 12.dp),
-                        thickness = 1.dp
-                    )
-                }
-            }
+        WordListView(items = state.items, modifier = Modifier.padding(paddingValues)) {
+            onWordClick(it)
         }
         if (state.showPlaceholder) {
             EmptySearchResultView(modifier = Modifier.fillMaxSize())
@@ -100,20 +86,6 @@ fun SearchBarTrailingIcon(state: SearchWordState, onClearQuery: () -> Unit) {
             )
         }
     }
-}
-
-@Composable
-fun SearchWordItem(word: Word, onWordClick: (Word) -> Unit) {
-    Text(
-        text = AnnotatedString(text = word.value),
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable {
-                onWordClick(word)
-            }
-            .padding(12.dp),
-        style = Typography.bodyLarge
-    )
 }
 
 @Preview

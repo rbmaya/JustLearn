@@ -29,6 +29,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import ru.justlearn.domain.Word
 import ru.justlearn.presentation.navigation.Route
 import ru.justlearn.presentation.navigation.TopLevelRoutes
+import ru.justlearn.presentation.saved.SavedWordListScreen
+import ru.justlearn.presentation.saved.SavedWordListViewModel
 import ru.justlearn.presentation.search.SearchWordScreen
 import ru.justlearn.presentation.search.SearchWordViewModel
 import ru.justlearn.presentation.word_details.WordDetailsScreen
@@ -129,7 +131,11 @@ class MainActivity : ComponentActivity() {
                                 )
                             }
                             composable<Route.SavedWords> {
-
+                                SavedWordListScreen(
+                                    viewModel = hiltViewModel<SavedWordListViewModel>(),
+                                ) { word ->
+                                    navController.navigate(Route.WordDetails(word))
+                                }
                             }
                         }
                     }
